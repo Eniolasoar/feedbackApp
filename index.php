@@ -1,6 +1,8 @@
 <?php
+
     if(isset($_POST["submit"])) {
         include "php/functions.php";
+        include "php/connection.php";
 
         $name = htmlspecialchars($_POST["name"]);
         $profilePicture = htmlspecialchars($_POST["profilePicture"]);
@@ -11,10 +13,9 @@
         //check if the fields are empty
         if (emptyField($name)) {
             $nameError = "Name is required";
+
         }
-        if (emptyField($profilePicture)) {
-            $profileError = "Profile Picture is required";
-        }
+
         if (emptyField($email)) {
             $emailError = "Email is required";
         }
@@ -26,10 +27,19 @@
         if (!validEmail($email)) {
             $invalidEmail = "Invalid Email";
         }
+        if(!emptyField($name)&&!emptyField($email)&&!emptyField($feedback)&&validEmail($email)){
+            $sql="INSERT INTO `users` (name,profilePicture,email,feedback) VALUES ('$name','$profilePicture','$email','$feedback')";
+            if(mysqli_query($conn,$sql)){
+                $result="Successfully saved to database";
+
+            }
+        }
+
     }
 ?>
 
 <?php include "header.php";?>
+<p class="lead fadeOut"><?php echo $result? $result :null ?></p>
     <img src="img/logo.png" class="w-25 mb-3" alt="" style="max-width:100px;">
     <h2>Feedback</h2>
     <p class="lead text-center">Leave feedback for Traversy Media</p>
