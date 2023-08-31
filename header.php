@@ -1,4 +1,4 @@
-
+<?php include"php/connection.php"?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,6 +12,7 @@
             background-color: green;
             padding: 10px;
             color: white;
+            opacity: 0;
             animation:fadeOut 5s forwards;
         }@keyframes fadeOut {
             0%{
@@ -23,6 +24,13 @@
                 filter: blur(5px);
             }
                  }
+         .flex{
+             display: flex;
+             flex-direction: column;
+             gap: 10px;
+             justify-content: center;
+             align-items: center;
+         }
     </style>
 </head>
 <body>
@@ -35,10 +43,10 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="/php-crash/feedback/index.html">Home</a>
+                    <a class="nav-link" href="index.php">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/php-crash/feedback/feedback.html">Feedback</a>
+                    <a class="nav-link" href="feedback.php">Feedback</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/php-crash/feedback/about.html">About</a>

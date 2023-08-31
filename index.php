@@ -27,8 +27,45 @@
         if (!validEmail($email)) {
             $invalidEmail = "Invalid Email";
         }
-        if(!emptyField($name)&&!emptyField($email)&&!emptyField($feedback)&&validEmail($email)){
-            $sql="INSERT INTO `users` (name,profilePicture,email,feedback) VALUES ('$name','$profilePicture','$email','$feedback')";
+
+        //handling file upload
+        $fileName=$_FILES["profilePicture"]["name"];
+        if($fileName==""){
+            $ImageMessage="No file provided";
+        }
+        $fileTmpName=$_FILES["profilePicture"]["tmp_name"];
+        $fileSize=$_FILES["profilePicture"]["size"];
+        $fileError=$_FILES["profilePicture"]["error"];
+
+        $extension=explode(".",$fileName);
+        $fileExt=strtolower(end($extension));
+
+        $allowed_ext=array("jpg","jpeg","png");
+        if($fileError ==0){
+            if(in_array($fileExt,$allowed_ext)){
+                if($fileSize <= 500000){
+                    $uniqueFileName=uniqid("IMG-",true).".".$fileExt;
+                    $fileDestination="uploads/".$uniqueFileName;
+                    if(!move_uploaded_file($fileTmpName,$fileDestination)){
+                        $ImageMessage="Upload unsuccessful";
+                    }
+
+                }
+                else{
+                    $ImageMessage="The file size is too large";
+                }
+            }
+            else{
+                $ImageMessage="File Type is not supported";
+            }
+
+        }
+        else{
+            $ImageMessage="Enter a valid file";
+        }
+
+        if(!emptyField($name)&&!emptyField($email)&&!emptyField($feedback)&&validEmail($email)&&empty($ImageMessage)){
+            $sql="INSERT INTO `users` (name,profilePicture,email,feedback) VALUES ('$name','$uniqueFileName','$email','$feedback')";
             if(mysqli_query($conn,$sql)){
                 $result="Successfully saved to database";
 
@@ -53,9 +90,9 @@
       </div>
       <div class="mb-3">
         <label for="name" class="form-label">Upload Profile Picture:</label>
-        <input type="file" class="form-control <?php echo $profileError ?"is-invalid" : null?>" id="profilePicture" name="profilePicture" >
+        <input type="file" class="form-control <?php echo $ImageMessage ?"is-invalid" : null?>" id="profilePicture" name="profilePicture" >
           <div class="invalid-feedback">
-              <?php echo $profileError;?>
+              <?php echo $ImageMessage;?>
           </div>
       </div>
       <div class="mb-3">
@@ -63,7 +100,7 @@
         <input type="email" class="form-control <?php echo $emailError ?"is-invalid" : null?>" id="email" name="email" placeholder="Enter your email">
           <div class="invalid-feedback">
               <?php echo $emailError;?>
-              <?php echo $invalidEmail;?>
+              <?php echo !$emailError ? $invalidEmail : null;?>
           </div>
       </div>
       <div class="mb-3">
