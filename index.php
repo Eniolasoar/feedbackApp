@@ -67,9 +67,19 @@
         if(!emptyField($name)&&!emptyField($email)&&!emptyField($feedback)&&validEmail($email)&&empty($ImageMessage)){
             $sql="INSERT INTO `users` (name,profilePicture,email,feedback) VALUES ('$name','$uniqueFileName','$email','$feedback')";
             if(mysqli_query($conn,$sql)){
-                $result="Successfully saved to database";
+
 
             }
+
+            $stmt=$conn->prepare("INSERT INTO `users` (name,profilePicture,email,feedback) VALUES(?,?,?,?)");
+            $stmt->bind_param("ssss",$name,$profilePicture,$email,$feedback);
+            if($stmt->execute()){
+                $result="Successfully saved to database";
+            }
+            else{
+                $result="Error!!".$stmt->error;
+            }
+            $stmt->close();
         }
 
     }
